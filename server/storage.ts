@@ -1,4 +1,6 @@
 import { users, progressUpdates, type User, type InsertUser, type ProgressUpdate, type InsertProgressUpdate } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -8,6 +10,104 @@ export interface IStorage {
   createProgressUpdate(update: InsertProgressUpdate): Promise<ProgressUpdate>;
   updateProgressUpdate(id: number, update: Partial<InsertProgressUpdate>): Promise<ProgressUpdate | undefined>;
   deleteProgressUpdate(id: number): Promise<boolean>;
+}
+
+export class DatabaseStorage implements IStorage {
+  private initialized = false;
+
+  private async initializeDefaultData() {
+    if (this.initialized) return;
+    
+    // Check if there are any progress updates
+    const existingUpdates = await db.select().from(progressUpdates).limit(1);
+    
+    if (existingUpdates.length === 0) {
+      // Add default progress updates
+      const defaultUpdates: InsertProgressUpdate[] = [
+        {
+          title: "Core Game Mechanics",
+          description: "Basic player movement and interaction systems implemented",
+          status: "completed",
+          imageUrl: null,
+        },
+        {
+          title: "Environment Design", 
+          description: "Atmospheric environments and lighting completed",
+          status: "completed",
+          imageUrl: null,
+        },
+        {
+          title: "Horror Elements",
+          description: "Currently implementing psychological horror mechanics",
+          status: "in-progress",
+          imageUrl: null,
+        },
+        {
+          title: "Audio Integration",
+          description: "Sound design and music integration pending",
+          status: "pending",
+          imageUrl: null,
+        },
+        {
+          title: "Beta Testing",
+          description: "Closed beta testing phase scheduled for next month",
+          status: "pending",
+          imageUrl: null,
+        },
+      ];
+
+      await db.insert(progressUpdates).values(defaultUpdates);
+    }
+    
+    this.initialized = true;
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getProgressUpdates(): Promise<ProgressUpdate[]> {
+    await this.initializeDefaultData();
+    return await db.select().from(progressUpdates).orderBy(progressUpdates.id);
+  }
+
+  async createProgressUpdate(update: InsertProgressUpdate): Promise<ProgressUpdate> {
+    const [progressUpdate] = await db
+      .insert(progressUpdates)
+      .values(update)
+      .returning();
+    return progressUpdate;
+  }
+
+  async updateProgressUpdate(id: number, update: Partial<InsertProgressUpdate>): Promise<ProgressUpdate | undefined> {
+    const [updated] = await db
+      .update(progressUpdates)
+      .set(update)
+      .where(eq(progressUpdates.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteProgressUpdate(id: number): Promise<boolean> {
+    const result = await db
+      .delete(progressUpdates)
+      .where(eq(progressUpdates.id, id));
+    return (result.rowCount || 0) > 0;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -125,4 +225,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
