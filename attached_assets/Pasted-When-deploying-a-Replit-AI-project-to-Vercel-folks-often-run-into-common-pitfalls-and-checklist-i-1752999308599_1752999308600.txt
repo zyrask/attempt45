@@ -1,0 +1,121 @@
+When deploying a Replit AI project to Vercel, folks often run into **common pitfalls and checklist items** that trip things up. Here are the main areas to audit:
+
+---
+
+## 🛠️ Essential Deployment Checklist
+
+### 1. **Dependencies & Build Commands**
+
+* ✅ Run `npm install` before attempting a build/deploy — missing packages cause breakage ([Reddit][1]).
+* Ensure build commands are split correctly:
+
+  ```bash
+  npm install
+  npm run build
+  ```
+
+  instead of chaining them in a single command ([Reddit][1]).
+
+---
+
+### 2. **`vercel.json` Setup**
+
+* Include correct builds:
+
+  ```json
+  "builds": [
+    { "src": "dist/index.js", "use": "@vercel/node" },
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist/public" } }
+  ]
+  ```
+* Set routes so `/api/*` go to your serverless function and other paths serve frontend ([Neon][2], [Medium][3]).
+
+---
+
+### 3. **Project Structure Compatibility**
+
+* Your folder layout must match what’s configured in `vercel.json`. Mismatches (e.g. wrong `dist` path or misconfigured routes) will result in 404s ([Vercel Community][4]).
+* If you're using Express, ensure your route definitions and entrypoint align with Vercel settings.
+
+---
+
+### 4. **GitHub Integration**
+
+* Export or sync your Replit project to GitHub first:
+
+  1. Delete Replit-specific files (`.replit`, `attached_assets/`).
+  2. Push to GitHub.
+  3. Connect the repo to Vercel for automatic deploy on commit ([Constanze Kratel][5], [Medium][6]).
+
+---
+
+### 5. **Port Configuration for Next.js**
+
+* Ensure the dev server uses port **3000**, not Replit’s default **5000**. Use scripts like:
+
+  ```json
+  "dev": "next dev --port 3000",
+  "build": "next build",
+  "start": "next start"
+  ```
+
+  ([Medium][6]).
+
+---
+
+### 6. **Clear `.gitignore` / File Hygiene**
+
+* Ignore Replit-specific files and folders.
+* Ensure only necessary build output and config files are tracked ([Medium][6]).
+
+---
+
+### 7. **Environment Variables**
+
+* Set your ENV vars (like API keys) in Vercel’s dashboard — missing these can cause silent failures.
+
+---
+
+### 8. **Verify Locally First**
+
+* Before linking to Vercel, run:
+
+  ```bash
+  npm install
+  npm run dev
+  ```
+
+  Ensure it works locally (as one user noted: “if it doesn’t run locally, it likely won’t deploy properly” ) ([Medium][3], [Medium][6]).
+
+---
+
+## 🧠 Community Insights
+
+From r/replit:
+
+> “npm command not found in PATH environment… Missing build step…” ([Reddit][1])
+> “Fix the run command syntax by separating npm install and npm run dev” ([Reddit][1])
+
+Outro: “Replit won’t deploy… suggested I switch to Vercel…” sourced from support ([Reddit][1]).
+
+---
+
+## ✅ Quick Summary
+
+1. **Install dependencies** separately.
+2. **Split build commands** — don't chain them.
+3. **Define correct builds/routes** in `vercel.json`.
+4. **Match your folder structure**.
+5. **Use GitHub export**: no Replit files, clean repo.
+6. **Set port to 3000** for Next.js/Node.
+7. **Add ENV vars** in Vercel dashboard.
+8. **Test locally before deploying**.
+
+Cover these, and your Replit AI → Vercel pipeline should be solid. Want me to draft a sample `vercel.json` or scripts for your specific stack?
+
+[1]: https://www.reddit.com/r/replit/comments/1l5trll/replit_advising_me_to_move_to_vercel/?utm_source=chatgpt.com "Replit advising me to move to Vercel - Reddit"
+[2]: https://neon.com/blog/postgresql-timeline-replit-v0?utm_source=chatgpt.com "Exploring 30 Years of Postgres History with Replit and Vercel v0"
+[3]: https://medium.com/%40yashrajpahwa/how-to-host-your-replit-ai-project-on-vercel-a-step-by-step-guide-1a7ec4e98e60?utm_source=chatgpt.com "How to Host Your Replit AI Project on Vercel — A Step-by-Step Guide"
+[4]: https://community.vercel.com/t/vercel-isnt-showing-code-not-html/1484?utm_source=chatgpt.com "Vercel isn't showing code, not HTML - Help"
+[5]: https://stanzisworld.com/2025/05/01/from-replit-to-vercel-how-i-prototyped-and-deployed-a-personal-site-with-next-js-in-one-afternoon/?utm_source=chatgpt.com "From Replit to Vercel: How I Prototyped and Deployed a Personal ..."
+[6]: https://medium.com/%40alanrodriigueez/how-to-deploy-your-replit-project-on-vercel-2de0ec9610c7?utm_source=chatgpt.com "How to Deploy your Replit Project on Vercel - Medium"

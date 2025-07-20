@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 100%);
+  --muted: hsl(0, 0%, 6.3%);
+  --muted-foreground: hsl(0, 0%, 80%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(0, 0%, 100%);
+  --card: hsl(0, 0%, 4%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --border: hsl(0, 0%, 10.2%);
+  --input: hsl(0, 0%, 10.2%);
+  --primary: hsl(348, 83%, 47%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(0, 0%, 6.3%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --accent: hsl(0, 0%, 6.3%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(348, 83%, 47%);
+  --radius: 0.5rem;
+  
+  /* Custom colors for midnight theme */
+  --midnight: hsl(0, 0%, 0%);
+  --midnight-light: hsl(0, 0%, 4%);
+  --red-accent: hsl(348, 83%, 47%);
+  --red-hover: hsl(348, 100%, 54%);
+  --border-dark: hsl(0, 0%, 10.2%);
+  --text-secondary: hsl(0, 0%, 80%);
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 100%);
+  --muted: hsl(0, 0%, 6.3%);
+  --muted-foreground: hsl(0, 0%, 80%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(0, 0%, 100%);
+  --card: hsl(0, 0%, 4%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --border: hsl(0, 0%, 10.2%);
+  --input: hsl(0, 0%, 10.2%);
+  --primary: hsl(348, 83%, 47%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(0, 0%, 6.3%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --accent: hsl(0, 0%, 6.3%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(348, 83%, 47%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background: linear-gradient(135deg, hsl(0, 0%, 0%) 0%, hsl(0, 0%, 4%) 50%, hsl(0, 0%, 0%) 100%);
+    background-attachment: fixed;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .bg-midnight {
+    background-color: var(--midnight);
+  }
+  
+  .bg-midnight-light {
+    background-color: var(--midnight-light);
+  }
+  
+  .text-red-accent {
+    color: var(--red-accent);
+  }
+  
+  .bg-red-accent {
+    background-color: var(--red-accent);
+  }
+  
+  .hover\:bg-red-hover:hover {
+    background-color: var(--red-hover);
+  }
+  
+  .hover\:text-red-hover:hover {
+    color: var(--red-hover);
+  }
+  
+  .border-red-accent {
+    border-color: var(--red-accent);
+  }
+  
+  .border-border-dark {
+    border-color: var(--border-dark);
+  }
+  
+  .text-text-secondary {
+    color: var(--text-secondary);
+  }
+  
+  .grid-bg {
+    background-image: radial-gradient(circle at 1px 1px, hsl(0, 0%, 10.2%) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+  
+  .glow-red {
+    box-shadow: 0 0 20px hsla(348, 83%, 47%, 0.3);
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px hsla(348, 83%, 47%, 0.5);
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px hsla(348, 83%, 47%, 0.2);
+  }
+  
+  @keyframes fadeIn {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+}
