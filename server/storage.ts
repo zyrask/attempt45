@@ -16,7 +16,7 @@ export class DatabaseStorage implements IStorage {
   private initialized = false;
 
   private async initializeDefaultData() {
-    if (this.initialized) return;
+    if (this.initialized || !db) return;
     
     // Check if there are any progress updates
     const existingUpdates = await db.select().from(progressUpdates).limit(1);
@@ -56,23 +56,26 @@ export class DatabaseStorage implements IStorage {
         },
       ];
 
-      await db.insert(progressUpdates).values(defaultUpdates);
+      await db!.insert(progressUpdates).values(defaultUpdates);
     }
     
     this.initialized = true;
   }
 
   async getUser(id: number): Promise<User | undefined> {
+    if (!db) throw new Error("Database not configured");
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
+    if (!db) throw new Error("Database not configured");
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    if (!db) throw new Error("Database not configured");
     const [user] = await db
       .insert(users)
       .values(insertUser)
@@ -81,11 +84,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProgressUpdates(): Promise<ProgressUpdate[]> {
+    if (!db) throw new Error("Database not configured");
     await this.initializeDefaultData();
     return await db.select().from(progressUpdates).orderBy(progressUpdates.id);
   }
 
   async createProgressUpdate(update: InsertProgressUpdate): Promise<ProgressUpdate> {
+    if (!db) throw new Error("Database not configured");
     const [progressUpdate] = await db
       .insert(progressUpdates)
       .values(update)
@@ -94,6 +99,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateProgressUpdate(id: number, update: Partial<InsertProgressUpdate>): Promise<ProgressUpdate | undefined> {
+    if (!db) throw new Error("Database not configured");
     const [updated] = await db
       .update(progressUpdates)
       .set(update)
@@ -103,6 +109,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProgressUpdate(id: number): Promise<boolean> {
+    if (!db) throw new Error("Database not configured");
     const result = await db
       .delete(progressUpdates)
       .where(eq(progressUpdates.id, id));
