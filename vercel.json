@@ -4,27 +4,12 @@
     {
       "src": "dist/index.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/public"
-      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/dist/index.js"
-    },
-    {
-      "src": "/uploads/(.*)",
-      "dest": "/dist/index.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/dist/public/$1"
+      "dest": "/dist/index.js"
     }
   ]
 }
